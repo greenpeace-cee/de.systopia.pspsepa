@@ -69,6 +69,9 @@ function pspsepa_civicrm_uninstall() {
  */
 function pspsepa_civicrm_enable() {
   _pspsepa_civix_civicrm_enable();
+
+  $customData = new CRM_Pspsepa_CustomData('de.systopia.pspsepa');
+  $customData->syncOptionGroup(__DIR__ . '/resources/formats_option_group.json');
 }
 
 /**
