@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/pspsepa/submit</path>
+    <page_callback>CRM_Pspsepa_Form_PspRunnerForm</page_callback>
+    <title>Submit transactions to PSP</title>
+    <access_arguments>batch sepa groups</access_arguments>
+  </item>
+</menu>

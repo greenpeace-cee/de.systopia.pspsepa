@@ -19,9 +19,9 @@
    {
       "_lookup": ["name"],
       "_translate": ["label"],
-      "label": "Ayden",
-      "description": "Ayden PSP",
-      "name": "ayden",
+      "label": "Adyen",
+      "description": "Adyen PSP",
+      "name": "adyen",
       "filter": "0",
       "is_reserved": "0",
       "is_active": "1"

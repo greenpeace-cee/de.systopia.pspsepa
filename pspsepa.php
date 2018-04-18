@@ -166,15 +166,22 @@ function pspsepa_civicrm_preProcess($formName, &$form) {
  * Implements hook_civicrm_navigationMenu().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
- *
+ */
 function pspsepa_civicrm_navigationMenu(&$menu) {
-  _pspsepa_civix_insert_navigation_menu($menu, 'Mailings', array(
-    'label' => E::ts('New subliminal message'),
-    'name' => 'mailing_subliminal_message',
-    'url' => 'civicrm/mailing/subliminal',
-    'permission' => 'access CiviMail',
+  $menu_item_search = array(
+    'name' => 'Submit transactions',
+  );
+  $menu_items = array();
+  CRM_Core_BAO_Navigation::retrieve($menu_item_search, $menu_items);
+  _pspsepa_civix_insert_navigation_menu($menu, 'Contributions', array(
+    'label' => E::ts('Submit transactions (PSP SEPA)', array('domain' => 'de.systopia.pspsepa')),
+    'name' => 'Submit transactions (PSP SEPA)',
+    'url' => 'civicrm/pspsepa/submit',
+    'permission' => 'batch sepa groups',
     'operator' => 'OR',
     'separator' => 0,
+    // See https://github.com/civicrm/civicrm-core/pull/11772 for weight.
+    'weight' => $menu_items['weight'],
   ));
   _pspsepa_civix_navigationMenu($menu);
-} // */
+}

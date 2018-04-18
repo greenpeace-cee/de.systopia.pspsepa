@@ -14,7 +14,7 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*/
 
-class CRM_Sepa_Logic_Format_ayden extends CRM_Sepa_Logic_Format {
+class CRM_Sepa_Logic_Format_adyen extends CRM_Sepa_Logic_Format {
 
   /** cache for Creditor ID to IBAN mapping */
   protected $creditor2iban = array();
