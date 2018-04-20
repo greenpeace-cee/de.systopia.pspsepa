@@ -31,7 +31,7 @@ abstract class CRM_Pspsepa_PspRunner {
     if (!isset(self::$_plugins)) {
       self::$_plugins = array();
       foreach (glob(__DIR__ . "/Plugins/*.php") as $filename) {
-        include $filename;
+        include_once $filename;
         $class_name = 'CRM_Pspsepa_Plugins_' . pathinfo($filename)['filename'];
         if (class_exists($class_name) && method_exists($class_name,'getPluginName')) {
           self::$_plugins[$class_name] = $class_name::getPluginName();
@@ -52,23 +52,25 @@ abstract class CRM_Pspsepa_PspRunner {
    * @param $filename
    * @param int $limit
    * @param int $offset
+   * @param array $params
    */
-  public final function processRecords($filename, $limit = 0, $offset = 0) {
+  public final function processRecords($filename, $limit = 0, $offset = 0, $params = array()) {
     $file = new SplFileObject($filename);
     $file->seek($offset);
     for ($l = 0; ($limit == 0 || $l < $limit); $l++) {
       if (!$file->valid()) {
         break;
       }
-      $this->processRecord($file->fgets());
+      $this->processRecord($file->fgets(), $params);
     }
   }
 
   /**
    * @param $record
+   * @param $params
    *
    * @return mixed
    */
-  public abstract function processRecord($record);
+  public abstract function processRecord($record, $params);
 
 }

@@ -42,6 +42,22 @@ class CRM_Pspsepa_Form_PspRunnerForm extends CRM_Core_Form {
       TRUE
     );
 
+    $this->add(
+      'text',
+      'authentication_token',
+      E::ts('Authentication token (API key)'),
+      array(),
+      TRUE
+    );
+
+    $this->add(
+      'text',
+      'account_name',
+      E::ts('Account name'),
+      array(),
+      TRUE
+    );
+
     $uploadFileSize = CRM_Utils_Number::formatUnitSize(
       $config->maxFileSize . 'm',
       TRUE
@@ -139,7 +155,7 @@ class CRM_Pspsepa_Form_PspRunnerForm extends CRM_Core_Form {
     if (class_exists($values['psp_type'])) {
       $runner = new $values['psp_type']();
       if (method_exists($runner, 'processRecords')) {
-        $runner->processRecords($file, self::BATCH_LIMIT);
+        $runner->processRecords($file, self::BATCH_LIMIT, 0, $values);
       }
     }
 
