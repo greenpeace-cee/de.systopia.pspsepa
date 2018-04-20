@@ -33,33 +33,23 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
 
   /**
    * @param $record
+   * @param $params
    *
    * @return mixed|void
    */
-  public function processRecord($record) {
-    // TODO.
-//    $params = array(
-//      'amount' => array(
-//        'value' => 2000,
-//        'currency' => 'EUR',
-//      ),
-//      'reference' => 'Your Reference Here',
-//      'merchantAccount' => 'TestMerchant',
-//      'shopperEmail' => 's.hopper@test.com',
-//      'shopperIP' => '61.294.12.12',
-//      'shopperReference' => 'Simon Hopper',
-//      'selectedRecurringDetailReference' => 'LATEST',
-//      'recurring' => array(
-//        'contract' => 'RECURRING',
-//      ),
-//      'shopperInteraction' => 'ContAuth',
-//    );
+  public function processRecord($record, $params) {
+    $request_params = json_decode($record, TRUE);
 
-    $params = json_decode($record, TRUE);
+    // Add merchantAccount from form input.
+    $request_params['merchantAccount'] = $params['account_name'];
 
     require_once 'HTTP/Request.php';
-    $request = new HTTP_Request(self::API_URL, $params);
+    $request = new HTTP_Request(self::API_URL, $request_params);
+    $request->addHeader('Content-Type', 'application/json');
+    // Add authentication token from form input.
+    $request->addHeader('x-api-key', $params['authentication_token']);
     $request->sendRequest();
+    $response = $request->getResponseBody();
   }
 
 }
