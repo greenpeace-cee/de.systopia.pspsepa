@@ -30,25 +30,26 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
 
   /**
    * @param $record
+   * @param $params
    *
    * @return mixed|void
    */
-  public function processRecord($record) {
+  public function processRecord($record, $params) {
     // TODO.
     require_once 'HTTP/Request.php';
 
-    $params = json_decode($record);
+    $request_params = json_decode($record);
     // TODO: Merge JSON record with authentication params etc.
-    $params['grant_type'] = 'client_credentials';
-    $params['client_id'] = 145227;
-    $params['client_secret'] = '12f071174cb7eb79d4aac5bc2f07563f';
-    $params['customerIp'];
-    $params['merchantPosId'];
-    $params['description'];
-    $params['currencyCode'];
-    $params['products'];
+    $request_params['grant_type'] = 'client_credentials';
+    $request_params['client_id'] = 145227;
+    $request_params['client_secret'] = '12f071174cb7eb79d4aac5bc2f07563f';
+    $request_params['customerIp'];
+    $request_params['merchantPosId'];
+    $request_params['description'];
+    $request_params['currencyCode'];
+    $request_params['products'];
 
-    $request = new HTTP_Request(self::API_URL, $params);
+    $request = new HTTP_Request(self::API_URL, $request_params);
     $request->sendRequest();
   }
 
