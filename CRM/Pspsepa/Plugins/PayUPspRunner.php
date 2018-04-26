@@ -19,7 +19,9 @@
  */
 class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
 
-  const API_URL = 'https://secure.payu.com/api/v2_1/orders';
+  // TODO: Replace sandbox URL with production URL
+  const API_URL = 'https://secure.snd.payu.com/api/v2_1/orders';
+//  const API_URL = 'https://secure.payu.com/api/v2_1/orders';
 
   /**
    * @return string
@@ -35,22 +37,20 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
    * @return mixed|void
    */
   public function processRecord($record, $params) {
-    // TODO.
     require_once 'HTTP/Request.php';
 
-    $request_params = json_decode($record);
-    // TODO: Merge JSON record with authentication params etc.
-    $request_params['grant_type'] = 'client_credentials';
-    $request_params['client_id'] = 145227;
-    $request_params['client_secret'] = '12f071174cb7eb79d4aac5bc2f07563f';
-    $request_params['customerIp'];
-    $request_params['merchantPosId'];
-    $request_params['description'];
-    $request_params['currencyCode'];
-    $request_params['products'];
+    $request_params = json_decode($record, TRUE);
 
+    // Add merchantAccount from form input.
+    $request_params['merchantPosId'] = $params['account_name'];
+
+    require_once 'HTTP/Request.php';
     $request = new HTTP_Request(self::API_URL, $request_params);
+    $request->addHeader('Content-Type', 'application/json');
+    // Add authentication token from form input.
+    $request->addHeader('Authorization', 'Bearer ' . $params['authentication_token']);
     $request->sendRequest();
+    $response = $request->getResponseBody();
   }
 
 }

@@ -44,16 +44,16 @@ class CRM_Pspsepa_Form_PspRunnerForm extends CRM_Core_Form {
 
     $this->add(
       'text',
-      'authentication_token',
-      E::ts('Authentication token (API key)'),
+      'account_name',
+      E::ts('Account name (Merchant/POS)'),
       array(),
       TRUE
     );
 
     $this->add(
       'text',
-      'account_name',
-      E::ts('Account name'),
+      'authentication_token',
+      E::ts('Authentication token (API key)'),
       array(),
       TRUE
     );
