@@ -37,9 +37,8 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
    * @return mixed|void
    */
   public function processRecord($record, $params) {
-    require_once 'HTTP/Request.php';
-
-    $request_params = json_decode($record, TRUE);
+    list($contribution_id, $payload) = explode(',', $record, 2);
+    $request_params = json_decode($payload, TRUE);
 
     // Add merchantAccount from form input.
     $request_params['merchantPosId'] = $params['account_name'];

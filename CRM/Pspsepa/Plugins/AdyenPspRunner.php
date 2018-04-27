@@ -38,7 +38,8 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
    * @return mixed|void
    */
   public function processRecord($record, $params) {
-    $request_params = json_decode($record, TRUE);
+    list($contribution_id, $payload) = explode(',', $record, 2);
+    $request_params = json_decode($payload, TRUE);
 
     // Add merchantAccount from form input.
     $request_params['merchantAccount'] = $params['account_name'];
