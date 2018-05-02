@@ -19,9 +19,14 @@
  */
 class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
 
-  // TODO: Replace sandbox URL with production URL
+  /**
+   * API URL to send requests to.
+   * TODO: Replace sandbox URL with production URL
+   */
   const API_URL = 'https://secure.snd.payu.com/api/v2_1/orders';
-//  const API_URL = 'https://secure.payu.com/api/v2_1/orders';
+  // const API_URL = 'https://secure.payu.com/api/v2_1/orders';
+
+  const AUTHORIZE_URL = 'https://secure.payu.com/pl/standard/user/oauth/authorize';
 
   /**
    * @return string
@@ -37,19 +42,45 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
    * @return mixed|void
    */
   public function processRecord($record, $params) {
+    require_once 'HTTP/Request.php';
+
     list($contribution_id, $payload) = explode(',', $record, 2);
     $request_params = json_decode($payload, TRUE);
 
     // Add merchantAccount from form input.
     $request_params['merchantPosId'] = $params['account_name'];
 
-    require_once 'HTTP/Request.php';
-    $request = new HTTP_Request(self::API_URL, $request_params);
-    $request->addHeader('Content-Type', 'application/json');
-    // Add authentication token from form input.
-    $request->addHeader('Authorization', 'Bearer ' . $params['authentication_token']);
-    $request->sendRequest();
-    $response = $request->getResponseBody();
+    // TODO: Request access token with client credentials.
+    $auth_request_params = array(
+      'grant_type' => 'client_credentials',
+      'client_id' => $params['client_id'],
+      'client_secret' => $params['authentication_token'],
+    );
+    $auth_request = new HTTP_Request(self::AUTHORIZE_URL);
+    $auth_request->setMethod('POST');
+    foreach ($auth_request_params as $auth_request_param_name => $auth_request_param_value) {
+      $auth_request->addPostData($auth_request_param_name, $auth_request_param_value);
+    }
+    $auth_request->addHeader('Content-Type', 'application/x-www-form-urlencoded');
+    $auth_request->sendRequest();
+    $auth_response = json_decode($auth_request->getResponseBody(), TRUE);
+    if (isset($auth_response['access_token'])) {
+      $request = new HTTP_Request(self::API_URL);
+      $request->setMethod('POST');
+      $request->addHeader('Content-Type', 'application/json');
+      $request->setBody(json_encode($request_params));
+      // Add authentication token from form input.
+      $request->addHeader('Authorization', 'Bearer ' . $auth_response['access_token']);
+      $request->sendRequest();
+      $response_code = $request->getResponseCode();
+      if ($response_code >= 200 && $response_code < 300) {
+        $response = $request->getResponseBody();
+      }
+      else {
+        // TODO: Error handling.
+      }
+
+    }
   }
 
 }

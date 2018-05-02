@@ -52,8 +52,14 @@ class CRM_Pspsepa_Form_PspRunnerForm extends CRM_Core_Form {
 
     $this->add(
       'text',
+      'client_id',
+      E::ts('Client ID')
+    );
+
+    $this->add(
+      'text',
       'authentication_token',
-      E::ts('Authentication token (API key)'),
+      E::ts('Authentication token (API key or client secret)'),
       array(),
       TRUE
     );
