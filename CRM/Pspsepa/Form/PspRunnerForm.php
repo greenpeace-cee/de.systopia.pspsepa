@@ -64,14 +64,14 @@ class CRM_Pspsepa_Form_PspRunnerForm extends CRM_Core_Form {
       TRUE
     );
 
-    $uploadFileSize = CRM_Utils_Number::formatUnitSize(
+    $uploadFileSize = CRM_Pspsepa_Utils_Number::formatUnitSize(
       $config->maxFileSize . 'm',
       TRUE
     );
     // Fetch uploadFileSize from php_ini when $config->maxFileSize is set to
     // "no limit".
     if (empty($uploadFileSize)) {
-      $uploadFileSize = CRM_Utils_Number::formatUnitSize(
+      $uploadFileSize = CRM_Pspsepa_Utils_Number::formatUnitSize(
         ini_get('upload_max_filesize'),
         TRUE
       );
