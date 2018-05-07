@@ -55,7 +55,7 @@ class CRM_Sepa_Logic_Format_payu extends CRM_Sepa_Logic_Format {
     $contact = $this->getContact($trxn['contact_id']);
     $trxn['byerFirstName'] = $contact['first_name'];
     $trxn['byerLastName'] = $contact['last_name'];
-    $trxn['buyerLanguage'] = (!empty($contact['preferred_language']) ? substr(0, 2, $contact['preferred_language']) : '');
+    $trxn['buyerLanguage'] = (!empty($contact['preferred_language']) ? substr($contact['preferred_language'], 0, 2) : '');
     $trxn['buyerEmail'] = $contact['email'];
 
     // Get shopperReference.
@@ -109,7 +109,7 @@ class CRM_Sepa_Logic_Format_payu extends CRM_Sepa_Logic_Format {
   protected function getPayMethodTokenFromIBAN($iban, $format = "/[_]/") {
     $matches = preg_split($format, $iban);
     if (empty($matches[1])) {
-      throw new Exception(E::ts('Could not extract shopperReference from IBAN.'));
+      throw new Exception(E::ts('Could not extract PayMethod token from IBAN.'));
     }
     return $matches[1];
   }
