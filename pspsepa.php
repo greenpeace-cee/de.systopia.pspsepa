@@ -181,7 +181,7 @@ function pspsepa_civicrm_navigationMenu(&$menu) {
     'operator' => 'OR',
     'separator' => 0,
     // See https://github.com/civicrm/civicrm-core/pull/11772 for weight.
-    'weight' => $menu_items['weight'],
+    'weight' => (isset($menu_items['weight']) ? $menu_items['weight'] : 0),
   ));
   _pspsepa_civix_navigationMenu($menu);
 }
