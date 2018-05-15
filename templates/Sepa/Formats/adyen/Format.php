@@ -50,17 +50,25 @@ class CRM_Sepa_Logic_Format_adyen extends CRM_Sepa_Logic_Format {
    *  transaction (contribution + extra data)
    */
   public function extendTransaction(&$trxn, $creditor_id) {
-    // Get shopperEmail.
-    $trxn['shopperEmail'] = $this->getShopperEmailFromContact($trxn['contact_id']);
+    try {
+      // Get shopperEmail.
+      $trxn['shopperEmail'] = $this->getShopperEmailFromContact($trxn['contact_id']);
 
-    // Get shopperIP.
-    $trxn['shopperIP'] = $this->getIPAddress();
+      // Get shopperIP.
+      $trxn['shopperIP'] = $this->getIPAddress();
 
-    // Get shopperReference.
-    $trxn['shopperReference'] = $this->getShopperReferenceFromIBAN($trxn['iban']);
+      // Get shopperReference.
+      $trxn['shopperReference'] = $this->getShopperReferenceFromIBAN($trxn['iban']);
 
-    // Get selectedRecurringDetailReference from contact.
-    $trxn['selectedRecurringDetailReference'] = $this->getSelectedRecurringDetailReferenceFromContact($trxn['contact_id']);
+      // Set reference to <shopperReference>_<contribution_id>.
+      $trxn['reference'] = $trxn['shopperReference'] . '_' . $trxn['contribution_id'];
+
+      // Get selectedRecurringDetailReference from contact.
+      $trxn['selectedRecurringDetailReference'] = $this->getSelectedRecurringDetailReferenceFromContact($trxn['contact_id']);
+    }
+    catch (Exception $exception) {
+      // TODO: Skip item?
+    }
   }
 
   /**

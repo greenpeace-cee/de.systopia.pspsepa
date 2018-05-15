@@ -50,21 +50,34 @@ class CRM_Sepa_Logic_Format_payu extends CRM_Sepa_Logic_Format {
    *  transaction (contribution + extra data)
    */
   public function extendTransaction(&$trxn, $creditor_id) {
-    $trxn['customerIp'] = $this->getIPAddress();
+    try {
+      $trxn['customerIp'] = $this->getIPAddress();
 
-    $contact = $this->getContact($trxn['contact_id']);
-    $trxn['byerFirstName'] = $contact['first_name'];
-    $trxn['byerLastName'] = $contact['last_name'];
-    $trxn['buyerLanguage'] = (!empty($contact['preferred_language']) ? substr($contact['preferred_language'], 0, 2) : '');
-    $trxn['buyerEmail'] = $contact['email'];
+      $contact = $this->getContact($trxn['contact_id']);
+      $trxn['buyerFirstName'] = $contact['first_name'];
+      $trxn['buyerLastName'] = $contact['last_name'];
+      $trxn['buyerLanguage'] = (!empty($contact['preferred_language']) ? substr($contact['preferred_language'], 0, 2) : '');
+      $trxn['buyerEmail'] = $contact['email'];
 
-    // Get shopperReference.
-    $trxn['payMethods'] = array(
-      'payMethod' => array(
-        'type' => 'CARD_TOKEN',
-        'value' => $this->getpayMethodTokenFromIBAN($trxn['iban']),
-      ),
-    );
+      // Get shopperReference.
+      $trxn['payMethods'] = array(
+        'payMethod' => array(
+          'type' => 'CARD_TOKEN',
+          'value' => $this->getpayMethodTokenFromIBAN($trxn['iban']),
+        ),
+      );
+
+      // Set order description.
+      $trxn['description'] = 'Recurring contribution';
+
+      // Set products (incl. name, unitPrice, quantity).
+      $trxn['productName'] = 'Recurring contribution';
+      $trxn['productUnitPrice'] = $trxn['total_amount'];
+      $trxn['productQuantity'] = 1;
+    }
+    catch (Exception $exception) {
+      // TODO: Skip item?
+    }
   }
 
   /**
