@@ -58,7 +58,7 @@ class CRM_Sepa_Logic_Format_adyen extends CRM_Sepa_Logic_Format {
       $trxn['shopperIP'] = $this->getIPAddress();
 
       // Get shopperReference.
-      $trxn['shopperReference'] = $this->getShopperReferenceFromIBAN($trxn['iban']);
+      $trxn['shopperReference'] = $trxn['iban'];
 
       // Set reference to <shopperReference>_<contribution_id>.
       $trxn['reference'] = $trxn['shopperReference'] . '_' . $trxn['contribution_id'];
@@ -103,21 +103,6 @@ class CRM_Sepa_Logic_Format_adyen extends CRM_Sepa_Logic_Format {
       $ip = $_SERVER['REMOTE_ADDR'];
     }
     return $ip;
-  }
-
-  /**
-   * @param $iban
-   * @param string $format
-   *
-   * @return mixed
-   * @throws \Exception
-   */
-  protected function getShopperReferenceFromIBAN($iban, $format = "/[_]/") {
-    $matches = preg_split($format, $iban);
-    if (empty($matches[1])) {
-      throw new Exception(E::ts('Could not extract shopperReference from IBAN.'));
-    }
-    return $matches[1];
   }
 
   /**

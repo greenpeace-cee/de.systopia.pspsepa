@@ -45,12 +45,33 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
     $request_params['merchantAccount'] = $params['account_name'];
 
     require_once 'HTTP/Request.php';
-    $request = new HTTP_Request(self::API_URL, $request_params);
-    $request->addHeader('Content-Type', 'application/json');
+    $request = new HTTP_Request(self::API_URL);
+    $request->setMethod('POST');
     // Add authentication token from form input.
     $request->addHeader('x-api-key', $params['authentication_token']);
+    $request->addHeader('Content-Type', 'application/json');
+    $request->setBody(json_encode($request_params));
     $request->sendRequest();
-    $response = $request->getResponseBody();
+    $response = json_decode($request->getResponseBody(), TRUE);
+    if ($response['status'] != 200) {
+      // TODO: Error handling.
+      switch ($response['errorCode']) {
+        default:
+          break;
+      }
+    }
+    else {
+      switch ($response['resultCode']) {
+        case 'Authorised':
+          // TODO: Update contribution, set status to "completed" (?).
+          break;
+        case 'Refused':
+        case 'Cancelled':
+        default:
+          break;
+      }
+    }
+    // TODO: Zuwendungen/Mandate bearbeiten - welche Status?.
   }
 
 }
