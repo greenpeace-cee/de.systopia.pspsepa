@@ -74,7 +74,14 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
       $request->sendRequest();
       $response_code = $request->getResponseCode();
       if ($response_code >= 200 && $response_code < 300) {
-        $response = $request->getResponseBody();
+        $response = json_decode($request->getResponseBody(), TRUE);
+        switch ($response['status']['statusCode']) {
+          case 'SUCCESS':
+            break;
+          default:
+            // TODO: Status code handling.
+            break;
+        }
       }
       else {
         // TODO: Error handling.

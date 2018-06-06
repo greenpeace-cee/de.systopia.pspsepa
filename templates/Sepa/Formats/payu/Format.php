@@ -60,15 +60,13 @@ class CRM_Sepa_Logic_Format_payu extends CRM_Sepa_Logic_Format {
       $trxn['buyerEmail'] = $contact['email'];
 
       // Get shopperReference.
-      $trxn['payMethods'] = array(
-        'payMethod' => array(
-          'type' => 'CARD_TOKEN',
-          'value' => $this->getpayMethodTokenFromIBAN($trxn['iban']),
-        ),
-      );
+      $trxn['card_token'] = $trxn['iban'];
 
       // Set order description.
       $trxn['description'] = 'Recurring contribution';
+
+      // Set total amount.
+      $trxn['total_amount'] *= 100;
 
       // Set products (incl. name, unitPrice, quantity).
       $trxn['productName'] = 'Recurring contribution';
@@ -110,20 +108,5 @@ class CRM_Sepa_Logic_Format_payu extends CRM_Sepa_Logic_Format {
       throw new Exception(E::ts('Contact not found.'));
     }
     return $contact;
-  }
-
-  /**
-   * @param $iban
-   * @param string $format
-   *
-   * @return mixed
-   * @throws \Exception
-   */
-  protected function getPayMethodTokenFromIBAN($iban, $format = "/[_]/") {
-    $matches = preg_split($format, $iban);
-    if (empty($matches[1])) {
-      throw new Exception(E::ts('Could not extract PayMethod token from IBAN.'));
-    }
-    return $matches[1];
   }
 }
