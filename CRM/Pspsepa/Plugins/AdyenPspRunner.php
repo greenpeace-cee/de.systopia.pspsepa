@@ -63,15 +63,31 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
     else {
       switch ($response['resultCode']) {
         case 'Authorised':
-          // TODO: Update contribution, set status to "completed" (?).
+          // Update contribution, set status to "Completed".
+          civicrm_api3('Contribution', 'create', array(
+            'id' => $contribution_id,
+            'contribution_status_id' => 'Completed',
+          ));
           break;
         case 'Refused':
         case 'Cancelled':
-        default:
+          // TODO: Zuwendungen/Mandate bearbeiten - welche Status?.
+          switch ($response['refusalReason']) {
+            case 'Expired Card':
+              $cancel_reason = 'CC97'; // RDNCC: Card expired
+              break;
+            default:
+              $cancel_reason = 'XX02'; // Cancellation without explanation
+              break;
+          }
+          civicrm_api3('Contribution', 'create', array(
+            'id' => $contribution_id,
+            'contribution_status_id' => 'Cancelled',
+            'cancel_reason' => $cancel_reason,
+          ));
           break;
       }
     }
-    // TODO: Zuwendungen/Mandate bearbeiten - welche Status?.
   }
 
 }
