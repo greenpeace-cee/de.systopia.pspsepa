@@ -73,18 +73,27 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
       $request->addHeader('Authorization', 'Bearer ' . $auth_response['access_token']);
       $request->sendRequest();
       $response_code = $request->getResponseCode();
-      if ($response_code >= 200 && $response_code < 300) {
-        $response = json_decode($request->getResponseBody(), TRUE);
-        switch ($response['status']['statusCode']) {
-          case 'SUCCESS':
-            break;
-          default:
-            // TODO: Status code handling.
-            break;
-        }
-      }
-      else {
-        // TODO: Error handling.
+      $response = json_decode($request->getResponseBody(), TRUE);
+      switch ($response['status']['statusCode']) {
+        case 'SUCCESS':
+          // Update contribution, set status to "Completed".
+          civicrm_api3('Contribution', 'create', array(
+            'id' => $contribution_id,
+            'contribution_status_id' => 'Completed',
+          ));
+          break;
+        default:
+          switch ($foo/* card response code if present */) {
+            default:
+              $cancel_reason = 'XX02'; // Cancellation without explanation
+              break;
+          }
+          civicrm_api3('Contribution', 'create', array(
+            'id' => $contribution_id,
+            'contribution_status_id' => 'Cancelled',
+            'cancel_reason' => $cancel_reason,
+          ));
+          break;
       }
 
     }

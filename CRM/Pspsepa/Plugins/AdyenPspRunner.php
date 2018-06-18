@@ -55,6 +55,7 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
     $response = json_decode($request->getResponseBody(), TRUE);
     if ($response['status'] != 200) {
       // TODO: Error handling.
+      // Bei HTTP Fehler einfach irgendwie abfangen (E-Mail an GP?)
       switch ($response['errorCode']) {
         default:
           break;
@@ -71,15 +72,15 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
           break;
         case 'Refused':
         case 'Cancelled':
-          // TODO: Zuwendungen/Mandate bearbeiten - welche Status?.
           switch ($response['refusalReason']) {
             case 'Expired Card':
               $cancel_reason = 'CC97'; // RDNCC: Card expired
               break;
             default:
-              $cancel_reason = 'XX02'; // Cancellation without explanation
+              $cancel_reason = 'CC98'; // RDNCC: Declined
               break;
           }
+          // Cancel contribution.
           civicrm_api3('Contribution', 'create', array(
             'id' => $contribution_id,
             'contribution_status_id' => 'Cancelled',
