@@ -61,7 +61,10 @@ abstract class CRM_Pspsepa_PspRunner {
       if (!$file->valid()) {
         break;
       }
-      $this->processRecord($file->fgets(), $params);
+      $record = $file->fgets();
+      if ($record) {
+        $this->processRecord($record, $params);
+      }
     }
   }
 

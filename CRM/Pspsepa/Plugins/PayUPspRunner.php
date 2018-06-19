@@ -14,6 +14,8 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*/
 
+use CRM_Pspsepa_ExtensionUtil as E;
+
 /**
  * Class CRM_Pspsepa_PayUPspRunner
  */
@@ -74,6 +76,16 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
       $request->sendRequest();
       $response_code = $request->getResponseCode();
       $response = json_decode($request->getResponseBody(), TRUE);
+      if ($response_code != 200) {
+        CRM_Core_Session::setStatus(
+          E::ts('HTTP connection status %1. Contribution ID: %2', array(
+            1 => $response_code,
+            2 => $contribution_id,
+          )),
+          E::ts('Processing record failed'),
+          'no-popup'
+        );
+      }
       switch ($response['status']['statusCode']) {
         case 'SUCCESS':
           // Update contribution, set status to "Completed".
@@ -95,7 +107,15 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
           ));
           break;
       }
-
+    }
+    else {
+      CRM_Core_Session::setStatus(
+        E::ts('Could not retrieve authorization token. Contribution ID: %1', array(
+          1 => $contribution_id,
+        )),
+        E::ts('Processing record failed'),
+        'no-popup'
+      );
     }
   }
 
