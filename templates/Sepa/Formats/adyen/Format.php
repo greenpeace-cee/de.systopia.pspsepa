@@ -60,6 +60,11 @@ class CRM_Sepa_Logic_Format_adyen extends CRM_Sepa_Logic_Format {
       // Get shopperReference.
       $trxn['shopperReference'] = $trxn['iban'];
 
+      // Set total amount.
+      // TODO: Adapt according to Adyen's specification:
+      // @link https://docs.adyen.com/developers/currency-codes
+      $trxn['total_amount'] *= 100;
+
       // Set reference to <shopperReference>_<contribution_id>.
       $trxn['reference'] = $trxn['shopperReference'] . '_' . $trxn['contribution_id'];
 
