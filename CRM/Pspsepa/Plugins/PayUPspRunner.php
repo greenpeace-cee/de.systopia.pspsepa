@@ -52,7 +52,7 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
     // Add merchantAccount from form input.
     $request_params['merchantPosId'] = $params['account_name'];
 
-    // TODO: Request access token with client credentials.
+    // Request access token with client credentials.
     $auth_request_params = array(
       'grant_type' => 'client_credentials',
       'client_id' => $params['client_id'],
@@ -86,26 +86,24 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
           'no-popup'
         );
       }
-      switch ($response['status']['statusCode']) {
-        case 'SUCCESS':
-          // Update contribution, set status to "Completed".
-          civicrm_api3('Contribution', 'create', array(
-            'id' => $contribution_id,
-            'contribution_status_id' => 'Completed',
-          ));
-          break;
-        default:
-          switch ($foo/* card response code if present */) {
-            default:
-              $cancel_reason = 'XX02'; // Cancellation without explanation
-              break;
-          }
-          civicrm_api3('Contribution', 'create', array(
-            'id' => $contribution_id,
-            'contribution_status_id' => 'Cancelled',
-            'cancel_reason' => $cancel_reason,
-          ));
-          break;
+      else {
+        switch ($response['status']['statusCode']) {
+          case 'SUCCESS':
+            // Update contribution, set status to "Completed".
+            civicrm_api3('Contribution', 'create', array(
+              'id' => $contribution_id,
+              'contribution_status_id' => 'Completed',
+            ));
+            break;
+          default:
+            $cancel_reason = 'CC98'; // RDNCC: Declined
+            civicrm_api3('Contribution', 'create', array(
+              'id' => $contribution_id,
+              'contribution_status_id' => 'Cancelled',
+              'cancel_reason' => $cancel_reason,
+            ));
+            break;
+        }
       }
     }
     else {
