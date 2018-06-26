@@ -57,8 +57,6 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
     $response = json_decode($request->getResponseBody(), TRUE);
     $response_code = $request->getResponseCode();
     if ($response_code != 200) {
-      // TODO: Error handling.
-      // Bei HTTP Fehler einfach irgendwie abfangen (E-Mail an GP?)
       CRM_Core_Session::setStatus(
         E::ts('HTTP connection status %1. Contribution ID: %2', array(
           1 => $response_code,
@@ -67,12 +65,6 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
         E::ts('Processing record failed'),
         'no-popup'
       );
-      if ($response) {
-        switch ($response['errorCode']) {
-          default:
-            break;
-        }
-      }
     }
     else {
       switch ($response['resultCode']) {
