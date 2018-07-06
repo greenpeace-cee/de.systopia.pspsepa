@@ -23,13 +23,15 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
 
   /**
    * API URL to send requests to.
-   * TODO: Replace sandbox URLs with production URLs
    */
-  const API_URL = 'https://secure.snd.payu.com/api/v2_1/orders';
-  // const API_URL = 'https://secure.payu.com/api/v2_1/orders';
+  //  const API_URL = 'https://secure.snd.payu.com/api/v2_1/orders';
+  const API_URL = 'https://secure.payu.com/api/v2_1/orders';
 
-  const AUTHORIZE_URL = 'https://secure.snd.payu.com/pl/standard/user/oauth/authorize';
-  // const AUTHORIZE_URL = 'https://secure.payu.com/pl/standard/user/oauth/authorize';
+  /**
+   * API URL to send authorization requests to.
+   */
+  //  const AUTHORIZE_URL = 'https://secure.snd.payu.com/pl/standard/user/oauth/authorize';
+  const AUTHORIZE_URL = 'https://secure.payu.com/pl/standard/user/oauth/authorize';
 
   /**
    * @return string

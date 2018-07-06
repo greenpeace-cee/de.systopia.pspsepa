@@ -22,7 +22,8 @@ use CRM_Pspsepa_ExtensionUtil as E;
 class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
 
   /**
-   *
+   * API URL to send requests to.
+   * TODO: Replace test URLs with production URLs.
    */
   const API_URL = 'https://pal-test.adyen.com/pal/servlet/Payment/v25/authorise';
 
