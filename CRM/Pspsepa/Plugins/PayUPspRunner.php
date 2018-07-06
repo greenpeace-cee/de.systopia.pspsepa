@@ -23,12 +23,13 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
 
   /**
    * API URL to send requests to.
-   * TODO: Replace sandbox URL with production URL
+   * TODO: Replace sandbox URLs with production URLs
    */
   const API_URL = 'https://secure.snd.payu.com/api/v2_1/orders';
   // const API_URL = 'https://secure.payu.com/api/v2_1/orders';
 
-  const AUTHORIZE_URL = 'https://secure.payu.com/pl/standard/user/oauth/authorize';
+  const AUTHORIZE_URL = 'https://secure.snd.payu.com/pl/standard/user/oauth/authorize';
+  // const AUTHORIZE_URL = 'https://secure.payu.com/pl/standard/user/oauth/authorize';
 
   /**
    * @return string
@@ -76,7 +77,7 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
       $request->sendRequest();
       $response_code = $request->getResponseCode();
       $response = json_decode($request->getResponseBody(), TRUE);
-      if ($response_code != 200) {
+      if ($response_code != 200 && $response_code != 201) {
         CRM_Core_Session::setStatus(
           E::ts('HTTP connection status %1. Contribution ID: %2', array(
             1 => $response_code,
