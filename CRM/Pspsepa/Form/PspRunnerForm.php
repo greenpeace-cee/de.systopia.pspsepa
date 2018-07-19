@@ -57,7 +57,7 @@ class CRM_Pspsepa_Form_PspRunnerForm extends CRM_Core_Form {
     );
 
     $this->add(
-      'text',
+      'password',
       'authentication_token',
       E::ts('Authentication token (API key or client secret)'),
       array(),
