@@ -104,6 +104,7 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
               'id' => $contribution_id,
               'contribution_status_id' => 'Cancelled',
               'cancel_reason' => $cancel_reason,
+              'cancel_date' => date('Y-m-d H:i:s'),
             ));
             break;
         }
