@@ -14,6 +14,8 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*/
 
+use CRM_Pspsepa_ExtensionUtil as E;
+
 /**
  * Class CRM_Pspsepa_PspRunner
  */
@@ -63,7 +65,25 @@ abstract class CRM_Pspsepa_PspRunner {
       }
       $record = $file->fgets();
       if ($record) {
-        $this->processRecord($record, $params);
+        $result = $this->processRecord($record, $params);
+        switch ($result['status']) {
+          case 'success':
+            $message_title = E::ts('Processing record succeeded');
+            break;
+          case 'error':
+            $message_title = E::ts('Processing record failed');
+            break;
+          case 'alert':
+            $message_title = E::ts('Processing record threw a warning');
+            break;
+          default:
+            $message_title = E::ts('Processed record');
+        }
+        CRM_Core_Session::setStatus(
+          $result['message'],
+          $message_title,
+          'no-popup'
+        );
       }
     }
   }

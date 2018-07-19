@@ -44,7 +44,13 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
    * @param $record
    * @param $params
    *
-   * @return mixed|void
+   * @return array
+   *   An associative array with the following elements:
+   *   - status: One of the statuses accepted by CRM_Core_Session::setStatus()
+   *   - message: A message describing what happened
+   *
+   * @throws CiviCRM_API3_Exception
+   *   When an API call failed.
    */
   public function processRecord($record, $params) {
     require_once 'HTTP/Request.php';
@@ -80,13 +86,15 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
       $response_code = $request->getResponseCode();
       $response = json_decode($request->getResponseBody(), TRUE);
       if ($response_code != 200 && $response_code != 201) {
-        CRM_Core_Session::setStatus(
-          E::ts('HTTP connection status %1. Contribution ID: %2', array(
-            1 => $response_code,
-            2 => $contribution_id,
-          )),
-          E::ts('Processing record failed'),
-          'no-popup'
+        $result = array(
+          'status' => 'error',
+          'message' => E::ts(
+            'HTTP connection status %1. Contribution ID: %2',
+            array(
+              1 => $response_code,
+              2 => $contribution_id,
+            )
+          ),
         );
       }
       else {
@@ -97,6 +105,15 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
               'id' => $contribution_id,
               'contribution_status_id' => 'Completed',
             ));
+            $result = array(
+              'status' => 'success',
+              'message' => E::ts(
+                'Successfully processed contribution %1 with status "Completed".',
+                array(
+                  1 => $contribution_id,
+                )
+              ),
+            );
             break;
           default:
             $cancel_reason = 'CC98'; // RDNCC: Declined
@@ -106,19 +123,33 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
               'cancel_reason' => $cancel_reason,
               'cancel_date' => date('Y-m-d H:i:s'),
             ));
+            $result = array(
+              'status' => 'alert',
+              'message' => E::ts(
+                'Processed Contribution %1 with status "Cancelled" and reason "%2".',
+                array(
+                  1 => $contribution_id,
+                  2 => $cancel_reason,
+                )
+              ),
+            );
             break;
         }
       }
     }
     else {
-      CRM_Core_Session::setStatus(
-        E::ts('Could not retrieve authorization token. Contribution ID: %1', array(
-          1 => $contribution_id,
-        )),
-        E::ts('Processing record failed'),
-        'no-popup'
+      $result = array(
+        'status' => 'error',
+        'message' => E::ts(
+          'Could not retrieve authorization token. Contribution ID: %1',
+          array(
+            1 => $contribution_id,
+          )
+        ),
       );
     }
+
+    return $result;
   }
 
 }

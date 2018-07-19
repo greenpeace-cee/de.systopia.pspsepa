@@ -38,7 +38,13 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
    * @param $record
    * @param $params
    *
-   * @return mixed|void
+   * @return array
+   *   An associative array with the following elements:
+   *   - status: One of the statuses accepted by CRM_Core_Session::setStatus()
+   *   - message: A message describing what happened
+   *
+   * @throws CiviCRM_API3_Exception
+   *   When an API call failed.
    */
   public function processRecord($record, $params) {
     list($contribution_id, $payload) = explode(',', $record, 2);
@@ -58,13 +64,15 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
     $response = json_decode($request->getResponseBody(), TRUE);
     $response_code = $request->getResponseCode();
     if ($response_code != 200) {
-      CRM_Core_Session::setStatus(
-        E::ts('HTTP connection status %1. Contribution ID: %2', array(
-          1 => $response_code,
-          2 => $contribution_id,
-        )),
-        E::ts('Processing record failed'),
-        'no-popup'
+      $result = array(
+        'status' => 'error',
+        'message' => E::ts(
+          'HTTP connection status %1. Contribution ID: %2',
+          array(
+            1 => $response_code,
+            2 => $contribution_id,
+          )
+        ),
       );
     }
     else {
@@ -75,6 +83,15 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
             'id' => $contribution_id,
             'contribution_status_id' => 'Completed',
           ));
+          $result = array(
+            'status' => 'success',
+            'message' => E::ts(
+              'Successfully processed contribution %1 with status "Completed".',
+              array(
+                1 => $contribution_id,
+              )
+            ),
+          );
           break;
         case 'Refused':
         case 'Cancelled':
@@ -93,9 +110,41 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
             'cancel_reason' => $cancel_reason,
             'cancel_date' => date('Y-m-d H:i:s'),
           ));
+          $result = array(
+            'status' => 'alert',
+            'message' => E::ts(
+              'Processed Contribution %1 with status "Cancelled" and reason "%2".',
+              array(
+                1 => $contribution_id,
+                2 => $cancel_reason,
+              )
+            ),
+          );
+          break;
+        default:
+          $cancel_reason = 'CC98'; // RDNCC: Declined
+          // Cancel contribution.
+          civicrm_api3('Contribution', 'create', array(
+            'id' => $contribution_id,
+            'contribution_status_id' => 'Cancelled',
+            'cancel_reason' => $cancel_reason,
+            'cancel_date' => date('Y-m-d H:i:s'),
+          ));
+          $result = array(
+            'status' => 'alert',
+            'message' => E::ts(
+              'Processed Contribution %1 with status "Cancelled" and reason "%2".',
+              array(
+                1 => $contribution_id,
+                2 => $cancel_reason,
+              )
+            ),
+          );
           break;
       }
     }
+
+    return $result;
   }
 
 }
