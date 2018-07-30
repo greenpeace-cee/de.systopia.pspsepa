@@ -72,6 +72,7 @@ function pspsepa_civicrm_enable() {
 
   $customData = new CRM_Pspsepa_CustomData('de.systopia.pspsepa');
   $customData->syncOptionGroup(__DIR__ . '/resources/formats_option_group.json');
+  $customData->syncOptionGroup(__DIR__ . '/resources/banking_reference_types_option_group.json');
 }
 
 /**
