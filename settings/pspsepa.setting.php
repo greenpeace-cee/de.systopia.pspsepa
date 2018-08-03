@@ -1,0 +1,40 @@
+<?php
+
+return [
+  'adyen_authorise_api_url' => [
+    'group_name' => 'PSP SEPA',
+    'group' => 'PSP SEPA',
+    'name' => 'adyen_authorise_api_url',
+    'type' => 'String',
+    'default' => 'https://pal-live.adyen.com/pal/servlet/Payment/v25/authorise',
+    'add' => '0.1',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'description' => 'Adyen Authorise API URL',
+    'help_text' => 'Adyen Authorise API URL',
+  ],
+  'payu_order_api_url' => [
+    'group_name' => 'PSP SEPA',
+    'group' => 'PSP SEPA',
+    'name' => 'payu_order_api_url',
+    'type' => 'String',
+    'default' => 'https://secure.payu.com/api/v2_1/orders',
+    'add' => '0.1',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'description' => 'PayU Order API URL',
+    'help_text' => 'PayU Order API URL',
+  ],
+  'payu_authorize_api_url' => [
+    'group_name' => 'PSP SEPA',
+    'group' => 'PSP SEPA',
+    'name' => 'payu_authorize_api_url',
+    'type' => 'String',
+    'default' => 'https://secure.payu.com/pl/standard/user/oauth/authorize',
+    'add' => '0.1',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'description' => 'PayU Authorize API URL',
+    'help_text' => 'PayU Authorize API URL',
+  ],
+];

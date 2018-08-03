@@ -96,4 +96,27 @@ abstract class CRM_Pspsepa_PspRunner {
    */
   public abstract function processRecord($record, $params);
 
+  /**
+   * Get the value of setting $name or its default value
+   *
+   * @param $name name of the setting
+   *
+   * @return mixed
+   * @throws \CiviCRM_API3_Exception
+   */
+  protected function getSetting($name) {
+    $value = civicrm_api3('Setting', 'GetValue', [
+      'name' => $name,
+      'group' => 'PSP SEPA',
+    ]);
+    if (empty($value)) {
+      $default = civicrm_api3('Setting', 'getdefaults', [
+        'name' => $name,
+        'group' => 'PSP SEPA',
+      ]);
+      $value = reset($default['values'])[$name];
+    }
+    return $value;
+  }
+
 }
