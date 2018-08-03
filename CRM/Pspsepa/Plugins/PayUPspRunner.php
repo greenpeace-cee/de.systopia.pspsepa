@@ -20,19 +20,6 @@ use CRM_Pspsepa_ExtensionUtil as E;
  * Class CRM_Pspsepa_PayUPspRunner
  */
 class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
-
-  /**
-   * API URL to send requests to.
-   */
-  //  const API_URL = 'https://secure.snd.payu.com/api/v2_1/orders';
-  const API_URL = 'https://secure.payu.com/api/v2_1/orders';
-
-  /**
-   * API URL to send authorization requests to.
-   */
-  //  const AUTHORIZE_URL = 'https://secure.snd.payu.com/pl/standard/user/oauth/authorize';
-  const AUTHORIZE_URL = 'https://secure.payu.com/pl/standard/user/oauth/authorize';
-
   /**
    * @return string
    */
@@ -67,7 +54,7 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
       'client_id' => $params['client_id'],
       'client_secret' => $params['authentication_token'],
     );
-    $auth_request = new HTTP_Request(self::AUTHORIZE_URL);
+    $auth_request = new HTTP_Request($this->getSetting('payu_authorize_api_url'));
     $auth_request->setMethod('POST');
     foreach ($auth_request_params as $auth_request_param_name => $auth_request_param_value) {
       $auth_request->addPostData($auth_request_param_name, $auth_request_param_value);
@@ -76,7 +63,7 @@ class CRM_Pspsepa_Plugins_PayUPspRunner extends CRM_Pspsepa_PspRunner {
     $auth_request->sendRequest();
     $auth_response = json_decode($auth_request->getResponseBody(), TRUE);
     if (isset($auth_response['access_token'])) {
-      $request = new HTTP_Request(self::API_URL);
+      $request = new HTTP_Request($this->getSetting('payu_order_api_url'));
       $request->setMethod('POST');
       $request->addHeader('Content-Type', 'application/json');
       $request->setBody(json_encode($request_params));
