@@ -1,0 +1,32 @@
+{
+  "_comment": "Register PSP bank account reference types",
+  "_lookup": ["name"],
+  "_translate": ["title"],
+  "name": "civicrm_banking.reference_types",
+  "title": "CiviBanking bank account reference types",
+  "is_active": "1",
+  "_values": [
+    {
+      "_lookup": ["name"],
+      "_translate": ["label"],
+      "label": "PayU",
+      "description": "PayU Card Token",
+      "name": "NBAN_PAYU",
+      "value": "NBAN_PAYU",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    },
+    {
+      "_lookup": ["name"],
+      "_translate": ["label"],
+      "label": "Adyen",
+      "description": "Adyen Shopper Reference",
+      "name": "NBAN_ADYEN",
+      "value": "NBAN_ADYEN",
+      "filter": "0",
+      "is_reserved": "0",
+      "is_active": "1"
+    }
+  ]
+}
