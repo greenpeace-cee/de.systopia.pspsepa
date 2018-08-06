@@ -83,15 +83,15 @@ class CRM_Sepa_Logic_Format_adyen extends CRM_Sepa_Logic_Format {
    * @throws Exception
    */
   protected function getShopperEmailFromContact($contact_id) {
-    $email = civicrm_api3('Email', 'getsingle', array(
+    $email = civicrm_api3('Email', 'get', array(
       'contact_id'     => $contact_id,
       'is_primary' => 1,
       'return' => 'email',
     ));
-    if (empty($email['email'])) {
-      throw new Exception(E::ts('Contact does not have a primary e-mail address.'));
+    if ($email['count'] > 0) {
+      return reset($email['values'])['email'];
     }
-    return $email['email'];
+    return NULL;
   }
 
   /**
