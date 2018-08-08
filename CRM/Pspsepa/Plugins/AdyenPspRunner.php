@@ -20,13 +20,6 @@ use CRM_Pspsepa_ExtensionUtil as E;
  * Class CRM_Pspsepa_AdyenPspRunner
  */
 class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
-
-  /**
-   * API URL to send requests to.
-   * TODO: Replace test URLs with production URLs.
-   */
-  const API_URL = 'https://pal-test.adyen.com/pal/servlet/Payment/v25/authorise';
-
   /**
    * @return string
    */
@@ -54,7 +47,7 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
     $request_params['merchantAccount'] = $params['account_name'];
 
     require_once 'HTTP/Request.php';
-    $request = new HTTP_Request(self::API_URL);
+    $request = new HTTP_Request($this->getSetting('adyen_authorise_api_url'));
     $request->setMethod('POST');
     // Add authentication token from form input.
     $request->addHeader('x-api-key', $params['authentication_token']);
