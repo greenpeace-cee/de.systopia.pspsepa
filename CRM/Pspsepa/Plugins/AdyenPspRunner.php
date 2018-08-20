@@ -56,19 +56,7 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
     $request->sendRequest();
     $response = json_decode($request->getResponseBody(), TRUE);
     $response_code = $request->getResponseCode();
-    if ($response_code != 200) {
-      $result = array(
-        'status' => 'error',
-        'message' => E::ts(
-          'HTTP connection status %1. Contribution ID: %2',
-          array(
-            1 => $response_code,
-            2 => $contribution_id,
-          )
-        ),
-      );
-    }
-    else {
+    if (!empty($response['resultCode'])) {
       switch ($response['resultCode']) {
         case 'Authorised':
           // Update contribution, set status to "Completed".
@@ -138,6 +126,18 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
           );
           break;
       }
+    }
+    elseif ($response_code != 200) {
+      $result = array(
+        'status' => 'error',
+        'message' => E::ts(
+          'HTTP connection status %1. Contribution ID: %2',
+          array(
+            1 => $response_code,
+            2 => $contribution_id,
+          )
+        ),
+      );
     }
 
     return $result;
