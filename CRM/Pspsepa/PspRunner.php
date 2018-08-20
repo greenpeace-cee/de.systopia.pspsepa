@@ -26,10 +26,89 @@ abstract class CRM_Pspsepa_PspRunner {
    */
   protected static $_plugins;
 
+  public $title     = NULL;
+  protected $record = NULL;
+  protected $params = NULL;
+
+  /**
+   * CRM_Pspsepa_PspRunner constructor.
+   *
+   * @param $record
+   */
+  protected function __construct($record, $params) {
+    $this->record = $record;
+    $this->params = $params;
+
+    if ($record === NULL) {
+      $this->title = ts("Initialising runner ...", array('domain' => 'de.systopia.pspsepa'));
+    } else {
+      $this->title = ts("Analysing contributions", array('domain' => 'de.systopia.pspsepa'));
+    }
+  }
+
+  /**
+   * @param $context
+   *
+   * @return bool
+   */
+  public function run($context) {
+    if ($this->record) {
+      $result = $this->processRecord($this->record, $this->params);
+      switch ($result['status']) {
+        case 'success':
+          $message_title = E::ts('Processing record succeeded');
+          break;
+        case 'error':
+          $message_title = E::ts('Processing record failed');
+          break;
+        case 'alert':
+          $message_title = E::ts('Processing record threw a warning');
+          break;
+        default:
+          $message_title = E::ts('Processed record');
+      }
+      CRM_Core_Session::setStatus(
+        $result['message'],
+        $message_title,
+        'no-popup'
+      );
+    }
+
+    return TRUE;
+  }
+
+  /**
+   * Use CRM_Queue_Runner to apply the templates
+   * This doesn't return, but redirects to the runner
+   */
+  public static function createRunner($filename, $params) {
+    // create a queue
+    $queue = CRM_Queue_Service::singleton()->create(array(
+      'type'  => 'Sql',
+      'name'  => 'pspsepa_runner',
+      'reset' => TRUE,
+    ));
+
+    $file = new SplFileObject($filename);
+    while($file->valid()) {
+      $record = $file->fgets();
+      $queue->createItem(new $params['psp_type']($record, $params));
+    }
+
+    // create a runner and launch it
+    $runner = new CRM_Queue_Runner(array(
+      'title'     => ts("Processing contribution", array('domain' => 'de.systopia.pspsepa')),
+      'queue'     => $queue,
+      'errorMode' => CRM_Queue_Runner::ERROR_CONTINUE,
+      'onEndUrl'  => '/civicrm/pspsepa/submit',
+    ));
+    $runner->runAllViaWeb();
+  }
+
   /**
    * @return array
    */
-  public static function getPlugins() {
+  public static final function getPlugins() {
     if (!isset(self::$_plugins)) {
       self::$_plugins = array();
       foreach (glob(__DIR__ . "/Plugins/*.php") as $filename) {

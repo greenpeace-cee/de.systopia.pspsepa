@@ -24,11 +24,6 @@ use CRM_Pspsepa_ExtensionUtil as E;
 class CRM_Pspsepa_Form_PspRunnerForm extends CRM_Core_Form {
 
   /**
-   *
-   */
-  const BATCH_LIMIT = 10;
-
-  /**
    * @inheritdoc
    */
   public function buildQuickForm() {
@@ -159,9 +154,8 @@ class CRM_Pspsepa_Form_PspRunnerForm extends CRM_Core_Form {
     fclose($fd);
 
     if (class_exists($values['psp_type'])) {
-      $runner = new $values['psp_type']();
-      if (method_exists($runner, 'processRecords')) {
-        $runner->processRecords($file, self::BATCH_LIMIT, 0, $values);
+      if (class_exists($values['psp_type']) && method_exists($values['psp_type'], 'createRunner')) {
+        $runner = $values['psp_type']::createRunner($file, $values);
       }
     }
 
