@@ -42,7 +42,10 @@ abstract class CRM_Pspsepa_PspRunner {
     if ($record === NULL) {
       $this->title = ts("Initialising runner ...", array('domain' => 'de.systopia.pspsepa'));
     } else {
-      $this->title = ts("Analysing contributions", array('domain' => 'de.systopia.pspsepa'));
+      $this->title = ts("Processing contribution with ID %1", array(
+        1 => explode(',', $record)[0],
+        'domain' => 'de.systopia.pspsepa',
+      ));
     }
   }
 
@@ -67,6 +70,7 @@ abstract class CRM_Pspsepa_PspRunner {
         default:
           $message_title = E::ts('Processed record');
       }
+      // TODO: This should be logged differently to avoid large lists of messages.
       CRM_Core_Session::setStatus(
         $result['message'],
         $message_title,
@@ -97,7 +101,7 @@ abstract class CRM_Pspsepa_PspRunner {
 
     // create a runner and launch it
     $runner = new CRM_Queue_Runner(array(
-      'title'     => ts("Processing contribution", array('domain' => 'de.systopia.pspsepa')),
+      'title'     => ts("Submitting contributions", array('domain' => 'de.systopia.pspsepa')),
       'queue'     => $queue,
       'errorMode' => CRM_Queue_Runner::ERROR_CONTINUE,
       'onEndUrl'  => '/civicrm/pspsepa/submit',
