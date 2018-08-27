@@ -127,6 +127,27 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
           break;
       }
     }
+    elseif ($response_code == 422) {
+      $cancel_reason = 'CC99'; // RDNCC: DATA ERROR
+      // Cancel contribution.
+      civicrm_api3('Contribution', 'create', array(
+        'id' => $contribution_id,
+        'contribution_status_id' => 'Cancelled',
+        'cancel_reason' => $cancel_reason,
+        'cancel_date' => date('Y-m-d H:i:s'),
+        'trxn_id' => $request_params['reference'],
+      ));
+      $result = array(
+        'status' => 'alert',
+        'message' => E::ts(
+          'Processed Contribution %1 with status "Cancelled" and reason "%2".',
+          array(
+            1 => $contribution_id,
+            2 => $cancel_reason,
+          )
+        ),
+      );
+    }
     elseif ($response_code != 200) {
       $result = array(
         'status' => 'error',
