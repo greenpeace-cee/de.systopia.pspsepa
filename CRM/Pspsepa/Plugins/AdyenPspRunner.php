@@ -56,7 +56,9 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
     $request->sendRequest();
     $response = json_decode($request->getResponseBody(), TRUE);
     $response_code = $request->getResponseCode();
-    CRM_Core_Error::debug_log_message("Received Adyen Response for Contribution {$contribution_id}: HTTP {$response_code}: {$request->getResponseBody()}");
+    if (defined('PSPSEPA_LOGGING') && PSPSEPA_LOGGING) {
+      CRM_Core_Error::debug_log_message("Received Adyen Response for Contribution {$contribution_id}: HTTP {$response_code}: {$request->getResponseBody()}");
+    }
     if (!empty($response['resultCode'])) {
       switch ($response['resultCode']) {
         case 'Authorised':
@@ -94,9 +96,10 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
           $result = array(
             'status' => 'success',
             'message' => E::ts(
-              'Successfully processed contribution %1 with status "' . $contribution_status . '".',
+              'Successfully processed contribution %1 with status "%2".',
               array(
                 1 => $contribution_id,
+                2 => $contribution_status,
               )
             ),
           );
