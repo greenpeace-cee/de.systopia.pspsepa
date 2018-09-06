@@ -56,6 +56,7 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
     $request->sendRequest();
     $response = json_decode($request->getResponseBody(), TRUE);
     $response_code = $request->getResponseCode();
+    CRM_Core_Error::debug_log_message("Received Adyen Response for Contribution {$contribution_id}: HTTP {$response_code}: {$request->getResponseBody()}");
     if (!empty($response['resultCode'])) {
       switch ($response['resultCode']) {
         case 'Authorised':
@@ -69,6 +70,31 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
             'status' => 'success',
             'message' => E::ts(
               'Successfully processed contribution %1 with status "Completed".',
+              array(
+                1 => $contribution_id,
+              )
+            ),
+          );
+          break;
+        case 'Received':
+          // Transaction was received but has not yet been processed
+          // If "Only Completed Contributions" is set in CiviSEPA, set/keep
+          // at "Completed", otherwise set to "In Progress"
+          $skip_closed = CRM_Core_BAO_Setting::getItem('SEPA Direct Debit Preferences', 'sdd_skip_closed');
+          if ($skip_closed) {
+            $contribution_status = 'Completed';
+          } else {
+            $contribution_status = 'In Progress';
+          }
+          civicrm_api3('Contribution', 'create', array(
+            'id' => $contribution_id,
+            'contribution_status_id' => $contribution_status,
+            'trxn_id' => $request_params['reference'],
+          ));
+          $result = array(
+            'status' => 'success',
+            'message' => E::ts(
+              'Successfully processed contribution %1 with status "' . $contribution_status . '".',
               array(
                 1 => $contribution_id,
               )
