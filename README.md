@@ -1,44 +1,15 @@
-# de.systopia.pspsepa
+# CiviSEPA PSP
 
-![Screenshot](/images/screenshot.png)
+This extension utilises the workflow of SEPA Direct Debit payments to keep
+track of payment contracts with external payment service providers and therefore
+extends the
+[CiviSEPA extension](https://github.com/project60/org.project60.sepa).
 
-(*FIXME: In one or two paragraphs, describe what the extension does and why one would download it. *)
+Payment requests can be sent to the PSP depending on payment contract data as
+managed by CiviSEPA.
 
-The extension is licensed under [AGPL-3.0](LICENSE.txt).
+## Supported PSP
 
-## Requirements
-
-* PHP v5.4+
-* CiviCRM (*FIXME: Version number*)
-
-## Installation (Web UI)
-
-This extension has not yet been published for installation via the web UI.
-
-## Installation (CLI, Zip)
-
-Sysadmins and developers may download the `.zip` file for this extension and
-install it with the command-line tool [cv](https://github.com/civicrm/cv).
-
-```bash
-cd <extension-dir>
-cv dl de.systopia.pspsepa@https://github.com/FIXME/de.systopia.pspsepa/archive/master.zip
-```
-
-## Installation (CLI, Git)
-
-Sysadmins and developers may clone the [Git](https://en.wikipedia.org/wiki/Git) repo for this extension and
-install it with the command-line tool [cv](https://github.com/civicrm/cv).
-
-```bash
-git clone https://github.com/FIXME/de.systopia.pspsepa.git
-cv en pspsepa
-```
-
-## Usage
-
-(* FIXME: Where would a new user navigate to get started? What changes would they see? *)
-
-## Known Issues
-
-(* FIXME *)
+Currently, the following payment service providers (PSP) are supported:
+- Adyen
+- PayU
