@@ -43,8 +43,10 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
     list($contribution_id, $payload) = explode(',', $record, 2);
     $request_params = json_decode($payload, TRUE);
 
-    // Add merchantAccount from form input.
-    $request_params['merchantAccount'] = $params['account_name'];
+    if (empty($request_params['merchantAccount']) || $request_params['merchantAccount'] == 'NOTPROVIDED') {
+      // Add merchantAccount from form input.
+      $request_params['merchantAccount'] = $params['account_name'];
+    }
 
     require_once 'HTTP/Request.php';
     $request = new HTTP_Request($this->getSetting('adyen_authorise_api_url'));

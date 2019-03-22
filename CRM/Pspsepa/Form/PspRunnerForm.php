@@ -41,8 +41,7 @@ class CRM_Pspsepa_Form_PspRunnerForm extends CRM_Core_Form {
       'text',
       'account_name',
       E::ts('Account name (Merchant/POS)'),
-      array(),
-      TRUE
+      array()
     );
 
     $this->add(
