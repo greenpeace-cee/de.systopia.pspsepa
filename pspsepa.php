@@ -24,6 +24,13 @@ use CRM_Pspsepa_ExtensionUtil as E;
  */
 function pspsepa_civicrm_config(&$config) {
   _pspsepa_civix_civicrm_config($config);
+  // de.systopia.pspsepa alters the civicrm_sdd_mandate.bic column to allow up
+  // to 25 characters. This change needs to be pushed to the DAO or it'll cause
+  // validation errors for BICs with more than 11 characters. This is quite
+  // hacky, unfortunately ...
+  $fields = CRM_Sepa_DAO_SEPAMandate::fields();
+  $fields['bic']['maxlength'] = 25;
+  CRM_Sepa_DAO_SEPAMandate::$_fields = $fields;
 }
 
 /**
