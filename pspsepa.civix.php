@@ -263,6 +263,7 @@ function _pspsepa_civix_find_files($dir, $pattern) {
  */
 function _pspsepa_civix_civicrm_managed(&$entities) {
   $mgdFiles = _pspsepa_civix_find_files(__DIR__, '*.mgd.php');
+  sort($mgdFiles);
   foreach ($mgdFiles as $file) {
     $es = include $file;
     foreach ($es as $e) {

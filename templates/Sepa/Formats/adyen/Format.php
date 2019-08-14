@@ -57,8 +57,9 @@ class CRM_Sepa_Logic_Format_adyen extends CRM_Sepa_Logic_Format {
       // Get shopperIP.
       $trxn['shopperIP'] = $this->getIPAddress();
 
-      // Get shopperReference.
+      // Get shopperReference and merchant
       $trxn['shopperReference'] = $trxn['iban'];
+      $trxn['merchantAccount'] = $trxn['bic'];
 
       // Set total amount.
       // TODO: Adapt according to Adyen's specification:
