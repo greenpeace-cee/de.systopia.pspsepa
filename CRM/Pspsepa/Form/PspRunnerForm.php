@@ -102,13 +102,14 @@ class CRM_Pspsepa_Form_PspRunnerForm extends CRM_Core_Form {
       'utf8File'
     );
 
-    $this->addButtons(array(
-      array(
+    $this->addButtons([
+      [
         'type' => 'submit',
         'name' => E::ts('Submit'),
         'isDefault' => TRUE,
-      ),
-    ));
+        'submitOnce' => TRUE,
+      ],
+    ]);
 
     // Export form elements.
     $this->assign('elementNames', $this->getRenderableElementNames());
