@@ -41,6 +41,40 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
    */
   public function processRecord($record, $params) {
     list($contribution_id, $payload) = explode(',', $record, 2);
+    // acquire a lock for this contribution to prevent a race on the following
+    // trxn_id check.
+    $lockKey = 'worker.contribute.adyen_' . $contribution_id;
+    $lock = \Civi::lockManager()->acquire($lockKey);
+    if (!$lock->isAcquired()) {
+      return [
+        'status' => 'error',
+        'message' => E::ts(
+          'Could not acquire lock for Contribution ID: %1. You may have submitted the file multiple times.',
+          [
+            1 => $contribution_id,
+          ]
+        ),
+      ];
+    }
+    // fetch the trxn_id of this contribution. an existing value implies that
+    // the contribution may have already been sent to Adyen.
+    $trxn_id = civicrm_api3('Contribution', 'getvalue', [
+      'return' => 'trxn_id',
+      'id'     => $contribution_id,
+    ]);
+    if (!empty($trxn_id)) {
+      $lock->release();
+      return [
+        'status' => 'error',
+        'message' => E::ts(
+          'Found existing trxn_id for Contribution ID: %1. The contribution may have already been sent to Adyen. Clear trxn_id to re-submit the contribution.',
+          [
+            1 => $contribution_id,
+          ]
+        ),
+      ];
+    }
+
     $request_params = json_decode($payload, TRUE);
 
     if (empty($request_params['merchantAccount']) || $request_params['merchantAccount'] == 'NOTPROVIDED') {
@@ -191,7 +225,7 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
         ),
       );
     }
-
+    $lock->release();
     return $result;
   }
 
