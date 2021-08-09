@@ -21,6 +21,8 @@ use CRM_Pspsepa_ExtensionUtil as E;
  */
 abstract class CRM_Pspsepa_PspRunner {
 
+  static $userAgent = NULL;
+
   /**
    * @var array $_plugins
    */
@@ -200,6 +202,23 @@ abstract class CRM_Pspsepa_PspRunner {
       $value = reset($default['values'])[$name];
     }
     return $value;
+  }
+
+  /**
+   * Get the user agent for HTTP requests
+   *
+   * @return string|null
+   * @throws \CiviCRM_API3_Exception
+   */
+  public static function getUserAgent() {
+    if (is_null(self::$userAgent)) {
+      $version = civicrm_api3('Extension', 'getvalue', [
+        'return' => 'version',
+        'key' => CRM_Pspsepa_ExtensionUtil::LONG_NAME,
+      ]);
+      self::$userAgent = CRM_Pspsepa_ExtensionUtil::LONG_NAME . '/' . $version;
+    }
+    return self::$userAgent;
   }
 
 }

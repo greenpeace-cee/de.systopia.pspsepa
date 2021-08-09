@@ -15,6 +15,8 @@
 +-------------------------------------------------------*/
 
 use CRM_Pspsepa_ExtensionUtil as E;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 
 /**
  * Class CRM_Pspsepa_AdyenPspRunner
@@ -82,18 +84,26 @@ class CRM_Pspsepa_Plugins_AdyenPspRunner extends CRM_Pspsepa_PspRunner {
       $request_params['merchantAccount'] = $params['account_name'];
     }
 
-    require_once 'HTTP/Request.php';
-    $request = new HTTP_Request($this->getSetting('adyen_authorise_api_url'));
-    $request->setMethod('POST');
-    // Add authentication token from form input.
-    $request->addHeader('x-api-key', $params['authentication_token']);
-    $request->addHeader('Content-Type', 'application/json');
-    $request->setBody(json_encode($request_params));
-    $request->sendRequest();
-    $response = json_decode($request->getResponseBody(), TRUE);
-    $response_code = $request->getResponseCode();
+    $client = new Client([
+      'timeout'  => 60,
+      'http_errors' => FALSE,
+    ]);
+    $request = new Request(
+      'POST',
+      $this->getSetting('adyen_authorise_api_url'),
+      [
+        'Accept'        => 'application/json',
+        'Content-Type'  => 'application/json',
+      ],
+      json_encode($request_params)
+    );
+    $request = $request->withHeader('x-api-key', $params['authentication_token']);
+    $request = $request->withHeader('User-Agent', self::getUserAgent());
+    $responseObject = $client->send($request);
+    $response = json_decode($responseObject->getBody(), TRUE);
+    $response_code = $responseObject->getStatusCode();
     if (defined('PSPSEPA_LOGGING') && PSPSEPA_LOGGING) {
-      CRM_Core_Error::debug_log_message("Received Adyen Response for Contribution {$contribution_id}: HTTP {$response_code}: {$request->getResponseBody()}");
+      CRM_Core_Error::debug_log_message("Received Adyen Response for Contribution {$contribution_id}: HTTP {$response_code}: {$responseObject->getBody()}");
     }
     if (!empty($response['resultCode'])) {
       switch ($response['resultCode']) {
