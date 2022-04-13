@@ -30,7 +30,13 @@ function pspsepa_civicrm_config(&$config) {
   // hacky, unfortunately ...
   $fields = CRM_Sepa_DAO_SEPAMandate::fields();
   $fields['bic']['maxlength'] = 25;
-  CRM_Sepa_DAO_SEPAMandate::$_fields = $fields;
+  if (isset(CRM_Sepa_DAO_SEPAMandate::$_fields)) {
+    CRM_Sepa_DAO_SEPAMandate::$_fields = $fields;
+  }
+  else {
+    Civi::$statics['CRM_Sepa_DAO_SEPAMandate']['fields'] = $fields;
+  }
+
 }
 
 /**
