@@ -1,6 +1,7 @@
 site_name: CiviSEPA PSP
 repo_url: https://github.com/systopia/de.systopia.pspsepa
-theme: material
+theme:
+  name: material
 
 nav:
   - 'Overview': index.md
@@ -20,3 +21,7 @@ markdown_extensions:
   - pymdownx.tilde
   - pymdownx.betterem
   - pymdownx.mark
+
+plugins:
+  - search:
+      lang: en
