@@ -13,3 +13,6 @@ managed by CiviSEPA.
 Currently, the following payment service providers (PSP) are supported:
 - Adyen
 - PayU
+
+## Documentation
+- https://github.com/systopia/de.systopia.pspsepa (automatic publishing)
