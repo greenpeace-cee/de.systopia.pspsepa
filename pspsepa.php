@@ -40,39 +40,12 @@ function pspsepa_civicrm_config(&$config) {
 }
 
 /**
- * Implements hook_civicrm_xmlMenu().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
- */
-function pspsepa_civicrm_xmlMenu(&$files) {
-  _pspsepa_civix_civicrm_xmlMenu($files);
-}
-
-/**
  * Implements hook_civicrm_install().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
 function pspsepa_civicrm_install() {
   _pspsepa_civix_civicrm_install();
-}
-
-/**
- * Implements hook_civicrm_postInstall().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_postInstall
- */
-function pspsepa_civicrm_postInstall() {
-  _pspsepa_civix_civicrm_postInstall();
-}
-
-/**
- * Implements hook_civicrm_uninstall().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
- */
-function pspsepa_civicrm_uninstall() {
-  _pspsepa_civix_civicrm_uninstall();
 }
 
 /**
@@ -88,83 +61,6 @@ function pspsepa_civicrm_enable() {
   $customData->syncOptionGroup(__DIR__ . '/resources/banking_reference_types_option_group.json');
 }
 
-/**
- * Implements hook_civicrm_disable().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
- */
-function pspsepa_civicrm_disable() {
-  _pspsepa_civix_civicrm_disable();
-}
-
-/**
- * Implements hook_civicrm_upgrade().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
- */
-function pspsepa_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  return _pspsepa_civix_civicrm_upgrade($op, $queue);
-}
-
-/**
- * Implements hook_civicrm_managed().
- *
- * Generate a list of entities to create/deactivate/delete when this module
- * is installed, disabled, uninstalled.
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_managed
- */
-function pspsepa_civicrm_managed(&$entities) {
-  _pspsepa_civix_civicrm_managed($entities);
-}
-
-/**
- * Implements hook_civicrm_caseTypes().
- *
- * Generate a list of case-types.
- *
- * Note: This hook only runs in CiviCRM 4.4+.
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
- */
-function pspsepa_civicrm_caseTypes(&$caseTypes) {
-  _pspsepa_civix_civicrm_caseTypes($caseTypes);
-}
-
-/**
- * Implements hook_civicrm_angularModules().
- *
- * Generate a list of Angular modules.
- *
- * Note: This hook only runs in CiviCRM 4.5+. It may
- * use features only available in v4.6+.
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_angularModules
- */
-function pspsepa_civicrm_angularModules(&$angularModules) {
-  _pspsepa_civix_civicrm_angularModules($angularModules);
-}
-
-/**
- * Implements hook_civicrm_alterSettingsFolders().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
- */
-function pspsepa_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
-  _pspsepa_civix_civicrm_alterSettingsFolders($metaDataFolders);
-}
-
-/**
- * Implements hook_civicrm_entityTypes().
- *
- * Declare entity types provided by this module.
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_entityTypes
- */
-function pspsepa_civicrm_entityTypes(&$entityTypes) {
-  _pspsepa_civix_civicrm_entityTypes($entityTypes);
-}
-
 // --- Functions below this ship commented out. Uncomment as required. ---
 
 /**
@@ -172,9 +68,8 @@ function pspsepa_civicrm_entityTypes(&$entityTypes) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
  *
-function pspsepa_civicrm_preProcess($formName, &$form) {
 
-} // */
+ // */
 
 /**
  * Implements hook_civicrm_navigationMenu().

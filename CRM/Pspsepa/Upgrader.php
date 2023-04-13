@@ -4,7 +4,7 @@ use CRM_Pspsepa_ExtensionUtil as E;
 /**
  * Collection of upgrade steps.
  */
-class CRM_Pspsepa_Upgrader extends CRM_Pspsepa_Upgrader_Base {
+class CRM_Pspsepa_Upgrader extends CRM_Extension_Upgrader_Base {
 
   /**
    * Change CiviSEPA BIC field to allow up to 25 characters
