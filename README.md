@@ -15,4 +15,4 @@ Currently, the following payment service providers (PSP) are supported:
 - PayU
 
 ## Documentation
-- https://github.com/systopia/de.systopia.pspsepa (automatic publishing)
+- https://docs.civicrm.org/pspsepa/en/latest** (automatic publishing)
